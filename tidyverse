@@ -1,0 +1,82 @@
+#----------------------------readr--------------------------------------#
+
+install.packages("tidyverse")
+library(readr)
+
+
+#Vamos a buscar la ruta del CSV en el computador
+file.choose()
+
+#En la consola se adquiere la ruta del archivo, se copia y se pega para guardar la variable
+ruta_csv <- "C:\\Users\\Augusto Bahamon\\Desktop\\MASTERGIS\\MasterLive\\datos.csv"
+
+#Importar los datos a R
+
+datos <- read_csv(ruta_csv)
+
+
+#Observar los datos (se crea un dataframe con el contenido del CSV)
+
+head(datos)
+
+#Cuando tenemos unos datos sin encabezado (se creara un nombre x1, x2, x3) 
+ruta_datos_sinencabezado <- "C:\\Users\\Augusto Bahamon\\Desktop\\MASTERGIS\\MasterLive\\datos_sin_encabezado.csv"
+
+datos_sin_encabezado <- read_csv(ruta_datos_sinencabezado, col_names = FALSE)
+
+
+View(datos_sin_encabezado)
+
+#Agregar encabezado a los datos
+
+datos_con_encabezado <- read_csv(ruta_datos_sinencabezado, col_names = c('pais', 'temporada', 'vida', 'poblacion'))
+
+View(datos_con_encabezado)
+
+
+#Cuando tenemos datos con punto y coma (;) para ello utilizamos la función de read_csv2
+
+ruta_datos_puntoycoma <- "C:\\Users\\Augusto Bahamon\\Desktop\\MASTERGIS\\MasterLive\\datos_puntoycoma.csv"
+
+datos_puntoycoma <- read_csv2(ruta_datos_puntoycoma)
+
+#-------------------------ggplot2------------------------------------#
+library(ggplot2)
+library(geoR)
+datos<-read.table("C:/Users/Augusto Bahamon/Desktop/MASTERGIS/MasterLive/Datos_cultivos.txt",head=T,dec=",")
+datos1<-read.table("C:/Users/Augusto Bahamon/Desktop/MASTERGIS/MasterLive/Datos_cultivos.txt",head=T,dec=",")
+show(datos)
+class(datos)
+dim(datos)
+
+#Prueba de normalidad sobre los errores de los datos
+names(datos1)
+datos1$error <- datos1$Da_P1 - mean(datos1$Da_P1)
+vmin <- min(datos1$error)
+vmax <- max(datos1$error)
+aval <- (vmax - vmin)/10
+
+shapiro.test(datos1$error)
+
+p <- ggplot(datos1, aes(x = error)) +
+  geom_histogram(breaks = seq(vmin, vmax, aval), col = "black", fill = "white")
+
+ggplot(datos1, aes(x = error)) +
+  geom_histogram(aes(y = ..density.., fill = ..count..),
+                 breaks = seq(vmin, vmax, aval)) +
+  stat_function(fun = dnorm, colour = "red",
+                args = list(mean = mean(datos1$error),
+                            sd = sd(datos1$error)))
+
+qqnorm(datos1$error, pch = 19, col = "red", alpha = .5)
+qqline(datos1$error)
+
+par(mfrow=c(1,1))
+
+
+hist(datos[,11])#debe ser siempre mayor a 0,05, Da_P1	 ()
+boxplot(datos[,11], ylab="Densidad", main="Boxplot")
+
+#-------------------------dplyr-----------------------#
+library(dplyr)
+datos %>% summarize(mean = mean(datos[,11]), n = n ())
